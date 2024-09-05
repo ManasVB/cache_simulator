@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cstdint>
 
+#include "sim.h"
+
 class CacheModule {
 
   private:
@@ -17,11 +19,13 @@ class CacheModule {
   uint8_t tagoffset;
   uint8_t tagbits;
 
+  MetaData **metadata;
+
   public:
 
   CacheModule(uint32_t, uint32_t, uint32_t);
-  ~CacheModule();
+  ~CacheModule() = default;
 
-  uint32_t tagAddr(uint32_t);
+  uint32_t getTagAddr(uint32_t);
 
 };

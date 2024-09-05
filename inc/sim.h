@@ -1,5 +1,4 @@
-#ifndef SIM_CACHE_H
-#define SIM_CACHE_H
+#pragma once
 
 typedef struct {
    uint32_t BLOCKSIZE;
@@ -14,6 +13,4 @@ typedef struct {
 typedef struct {
    bool valid_bit;
    bool dirty_bit;
-} metadata;
-
-#endif
+} MetaData;

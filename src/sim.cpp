@@ -1,7 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <inttypes.h>
+
 #include "sim.h"
+#include "cache_module.h"
+
+using namespace std;
 
 /*  "argc" holds the number of command-line arguments.
     "argv[]" holds the arguments themselves.
@@ -57,6 +61,11 @@ int main (int argc, char *argv[]) {
    printf("PREF_M:     %u\n", params.PREF_M);
    printf("trace_file: %s\n", trace_file);
    printf("\n");
+
+   CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC);
+   CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC);
+
+   // printf("Addr dfcfa8 -> %x\n",L2_Cache.getTagAddr(0xdfcfa8));
 
    // Read requests from the trace file and echo them back.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.
