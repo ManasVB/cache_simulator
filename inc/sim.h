@@ -1,8 +1,6 @@
-#ifndef SIM_CACHE_H
-#define SIM_CACHE_H
+#pragma once
 
-typedef 
-struct {
+typedef struct {
    uint32_t BLOCKSIZE;
    uint32_t L1_SIZE;
    uint32_t L1_ASSOC;
@@ -12,6 +10,7 @@ struct {
    uint32_t PREF_M;
 } cache_params_t;
 
-// Put additional data structures here as per your requirement.
-
-#endif
+typedef struct {
+   bool valid_bit;
+   bool dirty_bit;
+} MetaData;
