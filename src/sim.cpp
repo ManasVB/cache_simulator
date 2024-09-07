@@ -7,6 +7,8 @@
 
 using namespace std;
 
+CacheModule *head_node = nullptr;   // Init the head node of the hierarchy linked list to nullptr
+
 /*  "argc" holds the number of command-line arguments.
     "argv[]" holds the arguments themselves.
 
@@ -62,8 +64,8 @@ int main (int argc, char *argv[]) {
    printf("trace_file: %s\n", trace_file);
    printf("\n");
 
-   CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC);
-   CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC);
+   // CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC);
+   // CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC);
 
    // printf("Addr dfcfa8 -> %x\n",L2_Cache.getTagAddr(0xdfcfa8));
 

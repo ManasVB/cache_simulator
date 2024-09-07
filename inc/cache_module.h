@@ -21,7 +21,14 @@ class CacheModule {
 
   MetaData **metadata;
 
+  typedef enum {
+    HIT = true,
+    MISS = false
+  } CacheStatus;
+
   public:
+
+  CacheModule *next_node;  // linked-list impl to link to next level of hierarchy
 
   CacheModule(uint32_t, uint32_t, uint32_t);
   ~CacheModule() = default;

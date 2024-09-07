@@ -3,25 +3,39 @@
 
 #include "cache_module.h"
 
-CacheModule::CacheModule(uint32_t blocksize, uint32_t size, uint32_t assoc) {
-  this->blocksize = blocksize;
-  this->cache_size = size;
-  this->assoc = assoc;
-  this->sets = (size)/(blocksize * assoc);
+extern CacheModule *head_node;
 
-  this->blockoffsetbits = log2(this->blocksize);
-  this->indexbits = log2(this->sets);
-  this->tagoffset = this->blockoffsetbits + this->indexbits;
-  this->tagbits = 32 - this->tagoffset;
+CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc) {
+  this->blocksize = blocksize;
+  this->cache_size = cache_size;
+  this->assoc = assoc;
+  sets = (cache_size)/(blocksize * assoc);
+
+  blockoffsetbits = log2(blocksize);
+  indexbits = log2(sets);
+  tagoffset = blockoffsetbits + indexbits;
+  tagbits = 32 - tagoffset;
 
   // Initialize the metadata
-  this->metadata = new MetaData*[this->sets];
-  for(uint32_t i=0; i < this->sets; ++i) {
-    this->metadata[i] = new MetaData[this->assoc];
-    (void)memset(this->metadata[i], 0, (this->assoc) * sizeof(MetaData));
+  metadata = new MetaData*[sets];
+  for(uint32_t i=0; i < sets; ++i) {
+    metadata[i] = new MetaData[assoc];
+    (void)memset(metadata[i], 0, (assoc) * sizeof(MetaData));
+  }
+
+  // Cache linked list implementation
+  if(head_node == nullptr) {
+    head_node = this;
+    this->next_node = nullptr;
+  } else {
+    CacheModule *ptr = head_node;
+    while(ptr->next_node!=nullptr)
+      ptr = ptr->next_node;
+    ptr->next_node = this;
+    this->next_node = nullptr;
   }
 }
 
 uint32_t CacheModule::getTagAddr(uint32_t Addr) {
-  return (Addr >> (this->tagoffset));
+  return (Addr >> (tagoffset));
 }
