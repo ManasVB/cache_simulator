@@ -24,7 +24,7 @@ CacheStatus readAddress(uint32_t addr) {
       if((ptr->metadata[index][j].valid_bit == true) \
         && (ptr->tagArray[index][j] == tag)) {
           ++(ptr->Cache_Hits);
-          std::cout << "HIT # " << ptr->Cache_Hits << std::endl;
+          std::cout << "HIT # " << ptr->Cache_Hits << " way#" << (uint)j << std::endl;
           return HIT;
       }
     }
