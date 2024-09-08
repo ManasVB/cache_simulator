@@ -14,3 +14,8 @@ typedef struct {
    bool valid_bit;
    bool dirty_bit;
 } MetaData;
+
+typedef enum {
+   HIT = true,
+   MISS = false
+} CacheStatus;

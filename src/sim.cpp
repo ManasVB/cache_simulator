@@ -4,6 +4,7 @@
 
 #include "sim.h"
 #include "cache_module.h"
+#include "read.h"
 
 using namespace std;
 
@@ -64,15 +65,16 @@ int main (int argc, char *argv[]) {
    printf("trace_file: %s\n", trace_file);
    printf("\n");
 
-   // CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC);
+   CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC);
    // CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC);
-
-   // printf("Addr dfcfa8 -> %x\n",L2_Cache.getTagAddr(0xdfcfa8));
+   // uint16_t index = 0;
+   // printf("Tag -> %x, Index -> ",L1_Cache.parseAddress(0x1000f972, index));
+   // printf("%x\n",index);
 
    // Read requests from the trace file and echo them back.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.
       if (rw == 'r')
-         printf("r %x\n", addr);
+         readAddress(addr);
       else if (rw == 'w')
          printf("w %x\n", addr);
       else {
