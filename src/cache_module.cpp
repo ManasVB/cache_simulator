@@ -40,8 +40,8 @@ CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc
   //   std::cout<<std::endl;
   // }
 
-  // Initialize hits and misses to zero
-  Cache_Hits = Cache_Misses = 0;
+  // Initialize cache read/write and miss count to 0
+  Cache_Read_Miss = Cache_Write_Miss = Cache_Read_Requests = Cache_Write_Requests = 0;
 
   // Cache linked list implementation
   if(head_node == nullptr) {

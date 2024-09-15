@@ -4,7 +4,10 @@
 
 #include "sim.h"
 #include "cache_module.h"
-#include "read.h"
+#include "request.h"
+
+#define ReadAddrRequest(x, y) requestAddr(x, y, false)
+#define WriteAddrRequest(x, y) requestAddr(x, y, true)
 
 using namespace std;
 
@@ -74,7 +77,7 @@ int main (int argc, char *argv[]) {
    // Read requests from the trace file and echo them back.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.
       if (rw == 'r')
-         requestAddr(head_node, addr);
+         ReadAddrRequest(head_node, addr);
       else if (rw == 'w')
          printf("w %x\n", addr);
       else {
@@ -85,11 +88,13 @@ int main (int argc, char *argv[]) {
       ///////////////////////////////////////////////////////
       // Issue the request to the L1 cache instance here.
       ///////////////////////////////////////////////////////
-    }
+   }
 
-   // for(uint32_t j=0;j<4; ++j) {
-   //    std::cout << head_node->metadata[0x3d][j].LRU_Counter << " ";
-   //  }
+   for(uint32_t j=0;j<4; ++j) {
+      std::cout << head_node->metadata[0x3d][j].LRU_Counter << " ";
+   }
+
+   cout<< total_mem_traffic << endl;
 
     return(0);
 }

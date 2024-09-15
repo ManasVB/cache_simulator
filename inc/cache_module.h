@@ -23,7 +23,8 @@ class CacheModule {
 
   MetaData **metadata;
 
-  uint32_t Cache_Hits, Cache_Misses;
+  uint32_t Cache_Read_Requests, Cache_Write_Requests;
+  uint32_t Cache_Read_Miss, Cache_Write_Miss;
 
   CacheModule *next_node;  // linked-list impl to link to next level of hierarchy
 
