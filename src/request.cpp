@@ -19,9 +19,11 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   uint32_t assoc = ptr->Associativity();
 
   tag = ptr->parseAddress(addr, index);
-  printf("Tag->%x, Index->%x\t", tag, index);
+  printf("Operation ->%d, Address->%x, tag->%x, Index->%x\n", isWrite, addr,tag,index);
 
   isWrite ? ++(ptr->Cache_Write_Requests) : ++(ptr->Cache_Read_Requests);
+  std::cout << "Write Requests # " << ptr->Cache_Write_Requests << " Read Requests # " << ptr->Cache_Read_Requests;
+
 
   for(uint32_t j=0; j < assoc; ++j) {
     if((ptr->metadata[index][j].valid_bit == true) \
@@ -33,13 +35,16 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   }
 
   isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
+
+  std::cout << " Write Miss # " << ptr->Cache_Write_Miss << " Read Miss # " << ptr->Cache_Read_Miss << std::endl;
   
   // If cache miss occurs, read from the next level in the hierarchy
   requestAddr(ptr->next_node, addr, false);
 
   // Take the address block and place it according to LRU policy
-  LRU_Policy(ptr, index, tag, isWrite);
+  LRU_Policy(ptr, addr, index, tag, isWrite);
 
-  std::cout << "MISS # " << ptr->Cache_Read_Miss << std::endl;
+  std::cout<< "Total Memory Traffic " << total_mem_traffic << std::endl;
+
   return;
 }

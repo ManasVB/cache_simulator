@@ -5,4 +5,4 @@
 
 extern void LRU_StateUpdate(CacheModule*, uint32_t, uint32_t, bool);
 
-extern void LRU_Policy(CacheModule*, uint32_t, uint32_t, bool);
+extern void LRU_Policy(CacheModule*, uint32_t, uint32_t, uint32_t, bool);

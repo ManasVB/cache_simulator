@@ -69,7 +69,7 @@ int main (int argc, char *argv[]) {
    printf("\n");
 
    CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC);
-   // CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC);
+   CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC);
    // uint16_t index = 0;
    // printf("Tag -> %x, Index -> ",L1_Cache.parseAddress(0x1000f972, index));
    // printf("%x\n",index);
@@ -79,7 +79,7 @@ int main (int argc, char *argv[]) {
       if (rw == 'r')
          ReadAddrRequest(head_node, addr);
       else if (rw == 'w')
-         printf("w %x\n", addr);
+         WriteAddrRequest(head_node, addr);
       else {
          printf("Error: Unknown request type %c.\n", rw);
 	 exit(EXIT_FAILURE);
@@ -90,9 +90,9 @@ int main (int argc, char *argv[]) {
       ///////////////////////////////////////////////////////
    }
 
-   for(uint32_t j=0;j<4; ++j) {
-      std::cout << head_node->metadata[0x3d][j].LRU_Counter << " ";
-   }
+   // for(uint32_t j=0;j<4; ++j) {
+   //    std::cout << head_node->metadata[0x3d][j].LRU_Counter << " ";
+   // }
 
    cout<< total_mem_traffic << endl;
 
