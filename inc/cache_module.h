@@ -22,17 +22,17 @@ class CacheModule {
   public:
 
   MetaData **metadata;
-  uint32_t **tagArray;
 
-  uint32_t Cache_Hits, Cache_Misses;
+  uint32_t Cache_Read_Requests, Cache_Write_Requests;
+  uint32_t Cache_Read_Miss, Cache_Write_Miss;
 
   CacheModule *next_node;  // linked-list impl to link to next level of hierarchy
 
   CacheModule(uint32_t, uint32_t, uint32_t);
   ~CacheModule() = default;
 
-  uint32_t parseAddress(uint32_t, uint16_t &);
+  uint32_t parseAddress(uint32_t, uint32_t &);
 
-  uint32_t setAssoc(void);
+  uint32_t Associativity(void);
 
 };
