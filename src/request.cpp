@@ -26,7 +26,8 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   for(uint32_t j=0; j < assoc; ++j) {
     if((ptr->metadata[index][j].valid_bit == true) \
       && (ptr->metadata[index][j].tag == tag)) {
-        LRU_StateUpdate(ptr, index, j);
+        LRU_StateUpdate(ptr, index, j, isWrite);
+        std::cout << "HIT " << std::endl;
         return;
     }
   }
@@ -37,9 +38,8 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   requestAddr(ptr->next_node, addr, false);
 
   // Take the address block and place it according to LRU policy
-  LRU_Policy(ptr, index, tag);
+  LRU_Policy(ptr, index, tag, isWrite);
 
-  // std::cout << "MISS # " << ptr->Cache_Read_Miss << std::endl;
+  std::cout << "MISS # " << ptr->Cache_Read_Miss << std::endl;
   return;
-
 }

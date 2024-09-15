@@ -29,6 +29,7 @@ CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc
   for(uint32_t i=0; i < sets; ++i) {
     for(uint32_t j=0;j < assoc; ++j) {
       metadata[i][j].valid_bit = false;
+      metadata[i][j].dirty_bit = false;
       metadata[i][j].LRU_Counter = j;
     }
   }
