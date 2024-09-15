@@ -11,8 +11,10 @@ typedef struct {
 } cache_params_t;
 
 typedef struct {
+   uint32_t tag;
    bool valid_bit;
    bool dirty_bit;
+   uint32_t LRU_Counter;
 } MetaData;
 
 typedef enum {

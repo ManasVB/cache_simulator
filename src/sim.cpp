@@ -9,7 +9,7 @@
 using namespace std;
 
 CacheModule *head_node = nullptr;   // Init the head node of the hierarchy linked list to nullptr
-
+uint32_t total_mem_traffic = 0;
 /*  "argc" holds the number of command-line arguments.
     "argv[]" holds the arguments themselves.
 
@@ -74,7 +74,7 @@ int main (int argc, char *argv[]) {
    // Read requests from the trace file and echo them back.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.
       if (rw == 'r')
-         readAddress(addr);
+         requestAddr(head_node, addr);
       else if (rw == 'w')
          printf("w %x\n", addr);
       else {
@@ -86,6 +86,10 @@ int main (int argc, char *argv[]) {
       // Issue the request to the L1 cache instance here.
       ///////////////////////////////////////////////////////
     }
+
+   // for(uint32_t j=0;j<4; ++j) {
+   //    std::cout << head_node->metadata[0x3d][j].LRU_Counter << " ";
+   //  }
 
     return(0);
 }

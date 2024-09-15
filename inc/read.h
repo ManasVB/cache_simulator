@@ -2,4 +2,4 @@
 
 #include <cstdint>
 
-extern CacheStatus readAddress(uint32_t);
+extern void requestAddr(CacheModule*, uint32_t);

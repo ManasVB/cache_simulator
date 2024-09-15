@@ -22,7 +22,6 @@ class CacheModule {
   public:
 
   MetaData **metadata;
-  uint32_t **tagArray;
 
   uint32_t Cache_Hits, Cache_Misses;
 
@@ -31,8 +30,8 @@ class CacheModule {
   CacheModule(uint32_t, uint32_t, uint32_t);
   ~CacheModule() = default;
 
-  uint32_t parseAddress(uint32_t, uint16_t &);
+  uint32_t parseAddress(uint32_t, uint32_t &);
 
-  uint32_t setAssoc(void);
+  uint32_t Associativity(void);
 
 };

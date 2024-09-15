@@ -2,51 +2,40 @@
 
 #include "cache_module.h"
 #include "read.h"
+#include "LRU.h"
 
 extern CacheModule *head_node;
 
-CacheStatus readAddress(uint32_t addr) {
-  CacheModule *ptr = head_node;
-  uint16_t index = 0;
+void requestAddr(CacheModule *ptr, uint32_t addr) {
+  
+  if(ptr == nullptr)
+    return;
+
+  uint32_t index = 0;
   uint32_t tag = 0;
+  uint32_t assoc = ptr->Associativity();
 
-  printf("Address Read: %x\t",addr);
+  tag = ptr->parseAddress(addr, index);
+  printf("Tag->%x, Index->%x\t", tag, index);
 
-  // Traverse thru the memory hierarchy
-  while(ptr != nullptr) {
-
-    tag = ptr->parseAddress(addr, index);
-
-    printf("Tag->%x, Index->%x\t", tag, index);
-    
-    // Check for Cache Hit
-    for(uint8_t j=0; j < ptr->setAssoc(); ++j) {
-      if((ptr->metadata[index][j].valid_bit == true) \
-        && (ptr->tagArray[index][j] == tag)) {
-          ++(ptr->Cache_Hits);
-          std::cout << "HIT # " << ptr->Cache_Hits << " way#" << (uint)j << std::endl;
-          return HIT;
-      }
+  for(uint32_t j=0; j < assoc; ++j) {
+    if((ptr->metadata[index][j].valid_bit == true) \
+      && (ptr->metadata[index][j].tag == tag)) {
+        ++(ptr->Cache_Hits);
+        LRU_StateUpdate(ptr, index, j);
+        std::cout << "HIT # " << ptr->Cache_Hits << std::endl;
+        return;
     }
-    
-    ++(ptr->Cache_Misses);
-    std::cout << "MISS # " << ptr->Cache_Misses << std::endl;
-
-    // If there is an invalid block in the set, bring the requested block here. 
-    for(uint8_t j=0; j < ptr->setAssoc(); ++j) {
-      if((ptr->metadata[index][j].valid_bit == false)) {
-        ptr->tagArray[index][j] = tag;
-        ptr->metadata[index][j].valid_bit = true;
-        return MISS;
-      }
-    }
-
-    // Implement LRU policy
-
-    
-    
-    ptr = ptr->next_node;  
   }
+  ++(ptr->Cache_Misses);
 
-  return MISS;
+  // requestAddr(ptr->next_node, addr);
+
+  LRU_Policy(ptr, index, tag);
+
+
+
+  std::cout << "MISS # " << ptr->Cache_Misses << std::endl;
+  return;
+
 }
