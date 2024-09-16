@@ -29,6 +29,7 @@ CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc
   for(uint32_t i=0; i < sets; ++i) {
     for(uint32_t j=0;j < assoc; ++j) {
       metadata[i][j].valid_bit = false;
+      metadata[i][j].dirty_bit = false;
       metadata[i][j].LRU_Counter = j;
     }
   }
@@ -41,7 +42,7 @@ CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc
   // }
 
   // Initialize cache read/write and miss count to 0
-  Cache_Read_Miss = Cache_Write_Miss = Cache_Read_Requests = Cache_Write_Requests = 0;
+  Cache_Read_Miss = Cache_Write_Miss = Cache_Read_Requests = Cache_Write_Requests = Writeback_Nxt_Lvl = 0;
 
   // Cache linked list implementation
   if(head_node == nullptr) {
@@ -65,4 +66,12 @@ uint32_t CacheModule::parseAddress(uint32_t Addr, uint32_t &index) {
 
 uint32_t CacheModule::Associativity(void) {
   return this->assoc;
+}
+
+uint32_t CacheModule::BlockOffset(void) {
+  return this->blockoffsetbits;
+}
+
+uint32_t CacheModule::TagOffset(void) {
+  return this->tagoffset;
 }
