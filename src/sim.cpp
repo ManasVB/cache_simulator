@@ -94,7 +94,7 @@ int main (int argc, char *argv[]) {
    //    std::cout << head_node->metadata[0x3d][j].LRU_Counter << " ";
    // }
 
-   cout<< total_mem_traffic << endl;
+   std::cout<< "Total Memory Traffic " << total_mem_traffic << std::endl;
 
     return(0);
 }

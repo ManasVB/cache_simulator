@@ -44,7 +44,5 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   // Take the address block and place it according to LRU policy
   LRU_Policy(ptr, addr, index, tag, isWrite);
 
-  std::cout<< "Total Memory Traffic " << total_mem_traffic << std::endl;
-
   return;
 }
