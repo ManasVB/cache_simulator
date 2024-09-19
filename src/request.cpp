@@ -55,7 +55,8 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
 
   // Take the address block and place it according to LRU policy
   MetaData m = {.tag = tag, .valid_bit = true};
-  LRU_Policy(ptr, m, index, isWrite);
+  isWrite ? (m.dirty_bit = true) : (m.dirty_bit = false);
+  LRU_Policy(ptr, m, index);
 
   return;
 }
