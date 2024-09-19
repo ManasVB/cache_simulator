@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cstdint>
+#include <vector>
 
 #include "sim.h"
 
@@ -21,7 +22,7 @@ class CacheModule {
 
   public:
 
-  MetaData **metadata;
+  std::vector<std::vector<MetaData>> metadata;
 
   uint32_t Cache_Read_Requests, Cache_Write_Requests;
   uint32_t Cache_Read_Miss, Cache_Write_Miss;

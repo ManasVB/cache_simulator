@@ -1,8 +1,11 @@
 #include <cmath>
 #include <cstring>
 #include <cstdint>
+#include <vector>
 
 #include "cache_module.h"
+
+using namespace std;
 
 extern CacheModule *head_node;
 
@@ -20,19 +23,28 @@ CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc
   tagoffset = blockoffsetbits + indexbits;
   tagbits = 32 - tagoffset;
 
-  // Initialize the metadata
-  metadata = new MetaData*[sets];
-  for(uint32_t i=0; i < sets; ++i) {
-    metadata[i] = new MetaData[assoc];
-  }
+  // // Initialize the metadata
+  // metadata = new MetaData*[sets];
+  // for(uint32_t i=0; i < sets; ++i) {
+  //   metadata[i] = new MetaData[assoc];
+  // }
 
-  for(uint32_t i=0; i < sets; ++i) {
-    for(uint32_t j=0;j < assoc; ++j) {
-      metadata[i][j].valid_bit = false;
-      metadata[i][j].dirty_bit = false;
-      metadata[i][j].LRU_Counter = j;
-    }
-  }
+  // for(uint32_t i=0; i < sets; ++i) {
+  //   for(uint32_t j=0;j < assoc; ++j) {
+  //     metadata[i][j].valid_bit = false;
+  //     metadata[i][j].dirty_bit = false;
+  //     metadata[i][j].LRU_Counter = j;
+  //   }
+  // }
+
+  metadata.resize(sets);
+  // for(uint32_t i=0; i < sets; ++i) {
+  //   for(uint32_t j=0;j < assoc; ++j) {
+  //     metadata[i][j].valid_bit = false;
+  //     metadata[i][j].dirty_bit = false;
+  //   }
+  // }
+
 
   // for(uint32_t i=0; i < sets; ++i) {
   //   for(uint32_t j=0;j<assoc; ++j) {
