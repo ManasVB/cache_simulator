@@ -70,11 +70,8 @@ int main (int argc, char *argv[]) {
 
    CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC);
    CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC);
-   // uint16_t index = 0;
-   // printf("Tag -> %x, Index -> ",L1_Cache.parseAddress(0x1000f972, index));
-   // printf("%x\n",index);
 
-   // Read requests from the trace file and echo them back.
+   // Read requests from the trace file and execute.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.
       if (rw == 'r')
          ReadAddrRequest(head_node, addr);
@@ -84,11 +81,9 @@ int main (int argc, char *argv[]) {
          printf("Error: Unknown request type %c.\n", rw);
 	 exit(EXIT_FAILURE);
       }
-
-      ///////////////////////////////////////////////////////
-      // Issue the request to the L1 cache instance here.
-      ///////////////////////////////////////////////////////
    }
+
+   
 
    std::cout<< "Total Memory Traffic " << total_mem_traffic << std::endl;
 
