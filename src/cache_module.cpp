@@ -73,9 +73,11 @@ void CacheModule::PrintCacheContents() {
       printf("Set %x\t", i);
       for (auto j = metadata[i].rbegin(); j != metadata[i].rend(); ++j) {
         printf("%x",(*j).tag);
-        (*j).dirty_bit ? printf("D\t") : printf("\t");
+        (*j).dirty_bit ? printf(" D\t") : printf("\t");
       }
       cout << endl;
     }
   }
+
+  cout << endl;
 }
