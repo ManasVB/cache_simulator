@@ -66,14 +66,14 @@ uint32_t CacheModule::TagOffset() {
 
 void CacheModule::PrintCacheContents() {
   
-  cout << Cache_Name << "_Contents: " << endl;
+  cout << "===== " << Cache_Name << " contents " << "===== "<<endl;
 
   for(uint32_t i = 0; i < sets; ++i) {
     if(!(metadata[i].empty())) {
-      printf("Set %x\t", i);
+      printf("set\t%u:\t", i);
       for (auto j = metadata[i].rbegin(); j != metadata[i].rend(); ++j) {
-        printf("%x",(*j).tag);
-        (*j).dirty_bit ? printf(" D\t") : printf("\t");
+        printf("%x ",(*j).tag);
+        (*j).dirty_bit ? printf("D\t") : printf("\t");
       }
       cout << endl;
     }

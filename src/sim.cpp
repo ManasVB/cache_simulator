@@ -93,8 +93,24 @@ int main (int argc, char *argv[]) {
 
    }
    
+   cout << "===== Measurements =====" << endl;
+   cout << "a. L1 reads: \t" << L1_Cache.Cache_Read_Requests << endl;
+   cout << "b. L1 read misses: \t" << L1_Cache.Cache_Read_Miss << endl;
+   cout << "c. L1 writes: \t" << L1_Cache.Cache_Write_Requests << endl;
+   cout << "d. L1 write misses: \t" << L1_Cache.Cache_Write_Miss << endl;
+   cout << "e. L1 miss rate: \t" << 0 << endl;
+   cout << "f. L1 writebacks: \t" << L1_Cache.Writeback_Nxt_Lvl << endl;
+   cout << "g. L1 prefetches: \t" << 0 << endl;
+   cout << "h. L2 reads (demand): \t" << L2_Cache.Cache_Read_Requests << endl;
+   cout << "i. L2 read misses (demand): \t" << L2_Cache.Cache_Read_Miss << endl;
+   cout << "j. L2 reads (prefetch): \t" << 0 << endl;
+   cout << "k. L2 read misses (prefetch): \t" << 0 << endl;
+   cout << "l. L2 writes: \t" << L2_Cache.Cache_Write_Requests << endl;
+   cout << "m. L2 write misses: \t" << L2_Cache.Cache_Write_Miss << endl;
+   cout << "n. L2 miss rate: \t" << 0 << endl;
+   cout << "o. L2 writebacks: \t" << L2_Cache.Writeback_Nxt_Lvl << endl;
+   cout << "p. L2 prefetches: \t" << 0 << endl;
+   cout << "q. memory traffic: \t" << total_mem_traffic << endl;
 
-   std::cout<< "Total Memory Traffic " << total_mem_traffic << std::endl;
-
-    return(0);
+   return(0);
 }
