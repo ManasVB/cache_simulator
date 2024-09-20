@@ -90,10 +90,6 @@ int main (int argc, char *argv[]) {
       ///////////////////////////////////////////////////////
    }
 
-   // for(uint32_t j=0;j<4; ++j) {
-   //    std::cout << head_node->metadata[0x3d][j].LRU_Counter << " ";
-   // }
-
    std::cout<< "Total Memory Traffic " << total_mem_traffic << std::endl;
 
     return(0);
