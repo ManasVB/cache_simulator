@@ -13,7 +13,7 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   
   if(ptr == nullptr) {
     ++total_mem_traffic;
-    cout << "Mem traffic " << total_mem_traffic << endl;
+    // cout << "Mem traffic " << total_mem_traffic << endl;
     return;
   }
 
@@ -21,17 +21,17 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   uint32_t tag = 0;
 
   tag = ptr->parseAddress(addr, index);
-  printf("Operation ->%d, Address->%x, tag->%x, Index->%x\n", isWrite, addr,tag,index);
+  // printf("Operation ->%d, Address->%x, tag->%x, Index->%x\n", isWrite, addr,tag,index);
 
   isWrite ? ++(ptr->Cache_Write_Requests) : ++(ptr->Cache_Read_Requests);
-  std::cout << "Write Requests # " << ptr->Cache_Write_Requests << " Read Requests # " << ptr->Cache_Read_Requests;
+  // std::cout << "Write Requests # " << ptr->Cache_Write_Requests << " Read Requests # " << ptr->Cache_Read_Requests;
 
   // the variable md stands for metadata
   if(!((ptr->metadata[index]).empty())) {
     for(auto &md : ptr->metadata[index]) {
       if(md.valid_bit == true && md.tag == tag) {
         LRU_StateUpdate(ptr, md, index, isWrite);
-        std::cout << "HIT " << std::endl;
+        // std::cout << "HIT " << std::endl;
         return;
       }
     }
@@ -39,7 +39,7 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
 
   isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
 
-  std::cout << " Write Miss # " << ptr->Cache_Write_Miss << " Read Miss # " << ptr->Cache_Read_Miss << std::endl;
+  // std::cout << " Write Miss # " << ptr->Cache_Write_Miss << " Read Miss # " << ptr->Cache_Read_Miss << std::endl;
   
   // If cache miss occurs, read from the next level in the hierarchy
   requestAddr(ptr->next_node, addr, false);

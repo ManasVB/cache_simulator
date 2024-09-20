@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <inttypes.h>
+#include <iomanip>
 
 #include "sim.h"
 #include "cache_module.h"
@@ -68,8 +69,8 @@ int main (int argc, char *argv[]) {
    printf("trace_file: %s\n", trace_file);
    printf("\n");
 
-   CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC);
-   CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC);
+   CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC, "L1");
+   CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC, "L2");
 
    // Read requests from the trace file and execute.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.
@@ -83,9 +84,31 @@ int main (int argc, char *argv[]) {
       }
    }
 
+   CacheModule *ptr = head_node;
+   while (ptr != nullptr) {
+      ptr->PrintCacheContents();
+      ptr = ptr->next_node;
+   }
    
+   cout << "===== Measurements =====" << endl;
+   cout << "a. L1 reads: \t" << L1_Cache.Cache_Read_Requests << endl;
+   cout << "b. L1 read misses: \t" << L1_Cache.Cache_Read_Miss << endl;
+   cout << "c. L1 writes: \t" << L1_Cache.Cache_Write_Requests << endl;
+   cout << "d. L1 write misses: \t" << L1_Cache.Cache_Write_Miss << endl;
+   cout << std::fixed << std::setprecision(4) << "e. L1 miss rate: \t" << L1_Cache.CacheMissRate() << endl;
+   cout << "f. L1 writebacks: \t" << L1_Cache.Writeback_Nxt_Lvl << endl;
+   cout << "g. L1 prefetches: \t" << 0 << endl;
 
-   std::cout<< "Total Memory Traffic " << total_mem_traffic << std::endl;
+   cout << "h. L2 reads (demand): \t" << setw(10) << L2_Cache.Cache_Read_Requests << endl;
+   cout << "i. L2 read misses (demand): \t" << L2_Cache.Cache_Read_Miss << endl;
+   cout << "j. L2 reads (prefetch): \t" << 0 << endl;
+   cout << "k. L2 read misses (prefetch): \t" << 0 << endl;
+   cout << "l. L2 writes: \t" << L2_Cache.Cache_Write_Requests << endl;
+   cout << "m. L2 write misses: \t" << L2_Cache.Cache_Write_Miss << endl;
+   cout << std::fixed << std::setprecision(4) << "n. L2 miss rate: \t" << L2_Cache.CacheMissRate() << endl;
+   cout << "o. L2 writebacks: \t" << L2_Cache.Writeback_Nxt_Lvl << endl;
+   cout << "p. L2 prefetches: \t" << 0 << endl;
+   cout << "q. memory traffic: \t" << total_mem_traffic << endl;
 
-    return(0);
+   return(0);
 }

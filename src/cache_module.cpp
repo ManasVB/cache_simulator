@@ -9,54 +9,86 @@ using namespace std;
 
 extern CacheModule *head_node;
 
-CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc) {
+CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc, std::string name) {
+
+  // Set cache name
+  Cache_Name = name;
+
+ // Initialize cache read/write and miss count to 0
+  Cache_Read_Miss = Cache_Write_Miss = Cache_Read_Requests = Cache_Write_Requests = Writeback_Nxt_Lvl = 0U;
   
   // Set the cache parameters
   this->blocksize = blocksize;
   this->cache_size = cache_size;
   this->assoc = assoc;
-  sets = (cache_size)/(blocksize * assoc);
-  std::cout << "Sets = " << sets << std::endl;
 
-  blockoffsetbits = log2(blocksize);
-  indexbits = log2(sets);
-  tagoffset = blockoffsetbits + indexbits;
-  tagbits = 32 - tagoffset;
+  if(cache_size != 0U) {
+    
+    sets = (cache_size)/(blocksize * assoc);
 
-  // Resize metadata so that no. of rows equal no. of sets
-  metadata.resize(sets);
+    blockoffsetbits = log2(blocksize);
+    indexbits = log2(sets);
+    tagoffset = blockoffsetbits + indexbits;
+    tagbits = 32 - tagoffset;
 
-  // Initialize cache read/write and miss count to 0
-  Cache_Read_Miss = Cache_Write_Miss = Cache_Read_Requests = Cache_Write_Requests = Writeback_Nxt_Lvl = 0;
+    // Resize metadata so that no. of rows equal no. of sets
+    metadata.resize(sets);
 
-  // Cache linked list implementation
-  if(head_node == nullptr) {
-    head_node = this;
-    this->next_node = nullptr;
-  } else {
-    CacheModule *ptr = head_node;
-    while(ptr->next_node!=nullptr)
-      ptr = ptr->next_node;
-    ptr->next_node = this;
-    this->next_node = nullptr;
+  
+    // Cache linked list implementation
+    if(head_node == nullptr) {
+      head_node = this;
+      this->next_node = nullptr;
+    } else {
+      CacheModule *ptr = head_node;
+      while(ptr->next_node!=nullptr)
+        ptr = ptr->next_node;
+      ptr->next_node = this;
+      this->next_node = nullptr;
+    }
   }
 }
 
 uint32_t CacheModule::parseAddress(uint32_t Addr, uint32_t &index) {
   
-  uint32_t mask = (1 << tagoffset) - 1;
+  uint32_t mask = (1U << tagoffset) - 1U;
   index = (Addr & mask) >> blockoffsetbits;
   return (Addr >> (tagoffset));
 }
 
-uint32_t CacheModule::Associativity(void) {
+uint32_t CacheModule::Associativity() {
   return this->assoc;
 }
 
-uint32_t CacheModule::BlockOffset(void) {
+uint32_t CacheModule::BlockOffset() {
   return this->blockoffsetbits;
 }
 
-uint32_t CacheModule::TagOffset(void) {
+uint32_t CacheModule::TagOffset() {
   return this->tagoffset;
+}
+
+void CacheModule::PrintCacheContents() {
+  
+  cout << "===== " << Cache_Name << " contents " << "===== "<<endl;
+
+  for(uint32_t i = 0U; i < sets; ++i) {
+    if(!(metadata[i].empty())) {
+      printf("set\t%u:\t", i);
+      for (auto j = metadata[i].rbegin(); j != metadata[i].rend(); ++j) {
+        printf("%x ",(*j).tag);
+        (*j).dirty_bit ? printf("D\t") : printf("\t");
+      }
+      cout << endl;
+    }
+  }
+
+  cout << endl;
+}
+
+float CacheModule::CacheMissRate() {
+  if(this->cache_size != 0U)    
+    Miss_Rate = ((float)(Cache_Read_Miss + Cache_Write_Miss)/(float)(Cache_Read_Requests + Cache_Write_Requests));
+
+  return Miss_Rate;
 }
