@@ -4,6 +4,8 @@
 #include "request.h"
 #include "LRU.h"
 
+using namespace std;
+
 extern CacheModule *head_node;
 extern uint32_t total_mem_traffic;
 
@@ -11,6 +13,7 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   
   if(ptr == nullptr) {
     ++total_mem_traffic;
+    cout << "Mem traffic " << total_mem_traffic << endl;
     return;
   }
 
@@ -54,7 +57,8 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   requestAddr(ptr->next_node, addr, false);
 
   // Take the address block and place it according to LRU policy
-  MetaData m = {.tag = tag, .valid_bit = true};
+  MetaData m = {0};
+  m = {.tag = tag, .valid_bit = true};
   isWrite ? (m.dirty_bit = true) : (m.dirty_bit = false);
   LRU_Policy(ptr, m, index);
 
