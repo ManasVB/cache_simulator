@@ -68,8 +68,8 @@ int main (int argc, char *argv[]) {
    printf("trace_file: %s\n", trace_file);
    printf("\n");
 
-   CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC);
-   CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC);
+   CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC, "L1");
+   CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC, "L2");
 
    // Read requests from the trace file and execute.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.
@@ -83,6 +83,15 @@ int main (int argc, char *argv[]) {
       }
    }
 
+   CacheModule *ptr = head_node;
+   while (ptr != nullptr) {
+
+      ptr->PrintCacheContents();
+   
+
+      ptr = ptr->next_node;
+
+   }
    
 
    std::cout<< "Total Memory Traffic " << total_mem_traffic << std::endl;

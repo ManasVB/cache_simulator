@@ -9,14 +9,17 @@ using namespace std;
 
 extern CacheModule *head_node;
 
-CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc) {
+CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc, std::string name) {
+
+  // Set cache name
+  Cache_Name = name;
   
   // Set the cache parameters
   this->blocksize = blocksize;
   this->cache_size = cache_size;
   this->assoc = assoc;
   sets = (cache_size)/(blocksize * assoc);
-  std::cout << "Sets = " << sets << std::endl;
+  // std::cout << "Sets = " << sets << std::endl;
 
   blockoffsetbits = log2(blocksize);
   indexbits = log2(sets);
@@ -49,14 +52,30 @@ uint32_t CacheModule::parseAddress(uint32_t Addr, uint32_t &index) {
   return (Addr >> (tagoffset));
 }
 
-uint32_t CacheModule::Associativity(void) {
+uint32_t CacheModule::Associativity() {
   return this->assoc;
 }
 
-uint32_t CacheModule::BlockOffset(void) {
+uint32_t CacheModule::BlockOffset() {
   return this->blockoffsetbits;
 }
 
-uint32_t CacheModule::TagOffset(void) {
+uint32_t CacheModule::TagOffset() {
   return this->tagoffset;
+}
+
+void CacheModule::PrintCacheContents() {
+  
+  cout << Cache_Name << "_Contents: " << endl;
+
+  for(uint32_t i = 0; i < sets; ++i) {
+    if(!(metadata[i].empty())) {
+      printf("Set %x\t", i);
+      for (auto j = metadata[i].rbegin(); j != metadata[i].rend(); ++j) {
+        printf("%x",(*j).tag);
+        (*j).dirty_bit ? printf("D\t") : printf("\t");
+      }
+      cout << endl;
+    }
+  }
 }
