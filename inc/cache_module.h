@@ -32,8 +32,10 @@ class CacheModule {
 
   CacheModule *next_node;  // linked-list impl to link to next level of hierarchy
 
-  CacheModule(uint32_t, uint32_t, uint32_t, std::string);
+  CacheModule() = default;
   ~CacheModule() = default;
+
+  void CacheModule_Init(uint32_t, uint32_t, uint32_t, std::string);
 
   uint32_t parseAddress(uint32_t, uint32_t &);
 

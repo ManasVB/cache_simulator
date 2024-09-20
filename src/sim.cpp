@@ -68,8 +68,9 @@ int main (int argc, char *argv[]) {
    printf("trace_file: %s\n", trace_file);
    printf("\n");
 
-   CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC, "L1");
-   CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC, "L2");
+   CacheModule L1_Cache, L2_Cache;
+   L1_Cache.CacheModule_Init(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC, "L1");
+   L2_Cache.CacheModule_Init(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC, "L2");
 
    // Read requests from the trace file and execute.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.
@@ -85,15 +86,12 @@ int main (int argc, char *argv[]) {
 
    CacheModule *ptr = head_node;
    while (ptr != nullptr) {
-
       ptr->PrintCacheContents();
-   
-
       ptr = ptr->next_node;
-
    }
    
    cout << "===== Measurements =====" << endl;
+   if(params.L1_SIZE != 0) {
    cout << "a. L1 reads: \t" << L1_Cache.Cache_Read_Requests << endl;
    cout << "b. L1 read misses: \t" << L1_Cache.Cache_Read_Miss << endl;
    cout << "c. L1 writes: \t" << L1_Cache.Cache_Write_Requests << endl;
@@ -101,6 +99,8 @@ int main (int argc, char *argv[]) {
    cout << "e. L1 miss rate: \t" << 0 << endl;
    cout << "f. L1 writebacks: \t" << L1_Cache.Writeback_Nxt_Lvl << endl;
    cout << "g. L1 prefetches: \t" << 0 << endl;
+   }
+   if(params.L2_SIZE != 0) {
    cout << "h. L2 reads (demand): \t" << L2_Cache.Cache_Read_Requests << endl;
    cout << "i. L2 read misses (demand): \t" << L2_Cache.Cache_Read_Miss << endl;
    cout << "j. L2 reads (prefetch): \t" << 0 << endl;
@@ -110,6 +110,7 @@ int main (int argc, char *argv[]) {
    cout << "n. L2 miss rate: \t" << 0 << endl;
    cout << "o. L2 writebacks: \t" << L2_Cache.Writeback_Nxt_Lvl << endl;
    cout << "p. L2 prefetches: \t" << 0 << endl;
+   }
    cout << "q. memory traffic: \t" << total_mem_traffic << endl;
 
    return(0);

@@ -9,7 +9,10 @@ using namespace std;
 
 extern CacheModule *head_node;
 
-CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc, std::string name) {
+void CacheModule::CacheModule_Init(uint32_t blocksize, uint32_t cache_size, uint32_t assoc, std::string name) {
+
+  if(cache_size == 0)
+    return;
 
   // Set cache name
   Cache_Name = name;
@@ -19,7 +22,6 @@ CacheModule::CacheModule(uint32_t blocksize, uint32_t cache_size, uint32_t assoc
   this->cache_size = cache_size;
   this->assoc = assoc;
   sets = (cache_size)/(blocksize * assoc);
-  // std::cout << "Sets = " << sets << std::endl;
 
   blockoffsetbits = log2(blocksize);
   indexbits = log2(sets);
