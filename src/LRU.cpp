@@ -11,7 +11,8 @@ void LRU_StateUpdate(CacheModule* cache_ptr, MetaData md, uint32_t index, bool i
   for(auto itr = (cache_ptr->metadata[index]).begin(); itr != (cache_ptr->metadata[index]).end(); ++itr) {
     if(!(memcmp(&(*itr), &md, sizeof(MetaData)))) {
       (cache_ptr->metadata[index]).erase(itr);
-      isWrite ? (md.dirty_bit = true) : (md.dirty_bit = false);
+      if(isWrite)
+        (md.dirty_bit = true);
       (cache_ptr->metadata[index]).push_back(md);
       break;
     }
