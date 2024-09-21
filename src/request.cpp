@@ -17,8 +17,8 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
     return;
   }
 
-  uint32_t index = 0;
-  uint32_t tag = 0;
+  uint32_t index = 0U;
+  uint32_t tag = 0U;
 
   tag = ptr->parseAddress(addr, index);
   // printf("Operation ->%d, Address->%x, tag->%x, Index->%x\n", isWrite, addr,tag,index);
@@ -45,8 +45,7 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   requestAddr(ptr->next_node, addr, false);
 
   // Take the tag and place it according to LRU policy
-  MetaData m = {.tag = tag, .valid_bit = true};
-  isWrite ? (m.dirty_bit = true) : (m.dirty_bit = false);
+  MetaData m = {.tag = tag, .valid_bit = true, .dirty_bit = isWrite};
   LRU_Policy(ptr, m, index);
 
   return;

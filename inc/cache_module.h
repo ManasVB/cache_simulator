@@ -15,10 +15,10 @@ class CacheModule {
   uint32_t assoc;
   uint32_t sets;
 
-  uint8_t blockoffsetbits;
-  uint8_t indexbits;
-  uint8_t tagoffset;
-  uint8_t tagbits;
+  uint32_t blockoffsetbits;
+  uint32_t indexbits;
+  uint32_t tagoffset;
+  uint32_t tagbits;
 
   public:
 
