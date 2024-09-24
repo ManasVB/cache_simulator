@@ -17,8 +17,8 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
     return;
   }
 
-  uint32_t index = 0;
-  uint32_t tag = 0;
+  uint32_t index = 0U;
+  uint32_t tag = 0U;
 
   tag = ptr->parseAddress(addr, index);
   // printf("Operation ->%d, Address->%x, tag->%x, Index->%x\n", isWrite, addr,tag,index);
@@ -41,13 +41,14 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
 
   // std::cout << " Write Miss # " << ptr->Cache_Write_Miss << " Read Miss # " << ptr->Cache_Read_Miss << std::endl;
   
+  // Check blocks in the set and if dirty block, evict it
+  Write_Policy(ptr, index);
+
   // If cache miss occurs, read from the next level in the hierarchy
   requestAddr(ptr->next_node, addr, false);
 
-  // Take the tag and place it according to LRU policy
-  MetaData m = {.tag = tag, .valid_bit = true};
-  isWrite ? (m.dirty_bit = true) : (m.dirty_bit = false);
-  LRU_Policy(ptr, m, index);
+  MetaData m = {.tag = tag, .valid_bit = true, .dirty_bit = isWrite};
+  ptr->metadata[index].push_back(m);
 
   return;
 }

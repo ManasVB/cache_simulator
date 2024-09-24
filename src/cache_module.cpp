@@ -85,10 +85,3 @@ void CacheModule::PrintCacheContents() {
 
   cout << endl;
 }
-
-float CacheModule::CacheMissRate() {
-  if(this->cache_size != 0U)    
-    Miss_Rate = ((float)(Cache_Read_Miss + Cache_Write_Miss)/(float)(Cache_Read_Requests + Cache_Write_Requests));
-
-  return Miss_Rate;
-}

@@ -95,7 +95,9 @@ int main (int argc, char *argv[]) {
    cout << "b. L1 read misses: \t" << L1_Cache.Cache_Read_Miss << endl;
    cout << "c. L1 writes: \t" << L1_Cache.Cache_Write_Requests << endl;
    cout << "d. L1 write misses: \t" << L1_Cache.Cache_Write_Miss << endl;
-   cout << std::fixed << std::setprecision(4) << "e. L1 miss rate: \t" << L1_Cache.CacheMissRate() << endl;
+   if(params.L1_SIZE != 0)
+      L1_Cache.Miss_Rate = ((float)(L1_Cache.Cache_Read_Miss + L1_Cache.Cache_Write_Miss)/(float)(L1_Cache.Cache_Read_Requests + L1_Cache.Cache_Write_Requests));
+   cout << std::fixed << std::setprecision(4) << "e. L1 miss rate: \t" << L1_Cache.Miss_Rate << endl;
    cout << "f. L1 writebacks: \t" << L1_Cache.Writeback_Nxt_Lvl << endl;
    cout << "g. L1 prefetches: \t" << 0 << endl;
 
@@ -105,7 +107,9 @@ int main (int argc, char *argv[]) {
    cout << "k. L2 read misses (prefetch): \t" << 0 << endl;
    cout << "l. L2 writes: \t" << L2_Cache.Cache_Write_Requests << endl;
    cout << "m. L2 write misses: \t" << L2_Cache.Cache_Write_Miss << endl;
-   cout << std::fixed << std::setprecision(4) << "n. L2 miss rate: \t" << L2_Cache.CacheMissRate() << endl;
+   if(params.L2_SIZE != 0)
+      L2_Cache.Miss_Rate = (float)L2_Cache.Cache_Read_Miss/(float)L2_Cache.Cache_Read_Requests;
+   cout << std::fixed << std::setprecision(4) << "n. L2 miss rate: \t" << L2_Cache.Miss_Rate << endl;
    cout << "o. L2 writebacks: \t" << L2_Cache.Writeback_Nxt_Lvl << endl;
    cout << "p. L2 prefetches: \t" << 0 << endl;
    cout << "q. memory traffic: \t" << total_mem_traffic << endl;
