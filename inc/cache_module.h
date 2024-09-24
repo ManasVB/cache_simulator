@@ -46,5 +46,4 @@ class CacheModule {
 
   void PrintCacheContents(void);
 
-  float CacheMissRate(void);
 };

@@ -21,23 +21,19 @@ void LRU_StateUpdate(CacheModule* cache_ptr, MetaData md, uint32_t index, bool i
   assert((cache_ptr->metadata[index]).size() <= cache_ptr->Associativity());
 }
 
-void LRU_Policy(CacheModule* cache_ptr, MetaData md, uint32_t index) {
+void Write_Policy(CacheModule* cache_ptr, uint32_t index) {
 
-  if(cache_ptr->metadata[index].size() < cache_ptr->Associativity()) {
-    (cache_ptr->metadata[index]).push_back(md);
-  } else if(cache_ptr->metadata[index].size() == cache_ptr->Associativity()) {
+  if(cache_ptr->metadata[index].size() == cache_ptr->Associativity()) {
     if((cache_ptr ->metadata[index].front()).dirty_bit) {
       uint32_t writeback_tag = (cache_ptr->metadata[index].front()).tag;
-      uint32_t writeback_block_addr = (writeback_tag << cache_ptr->TagOffset()) | \
-        (index << cache_ptr->BlockOffset());
+      uint32_t writeback_block_addr = ((writeback_tag << cache_ptr->TagOffset()) | \
+        (index << cache_ptr->BlockOffset()));
       requestAddr(cache_ptr->next_node, writeback_block_addr, true);
       ++(cache_ptr->Writeback_Nxt_Lvl);
     }
+
     (cache_ptr->metadata[index]).erase(cache_ptr->metadata[index].begin());
-    (cache_ptr->metadata[index]).push_back(md);
-  } else {
-    exit(EXIT_FAILURE);
   }
 
-  assert((cache_ptr->metadata[index]).size() <= cache_ptr->Associativity());
+  assert((cache_ptr->metadata[index]).size() < cache_ptr->Associativity());  
 }
