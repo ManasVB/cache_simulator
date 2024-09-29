@@ -29,6 +29,8 @@ class CacheModule {
   uint32_t Cache_Read_Requests, Cache_Write_Requests;
   uint32_t Cache_Read_Miss, Cache_Write_Miss;
   uint32_t Writeback_Nxt_Lvl;
+  uint32_t prefetches = 0;
+  
   float Miss_Rate = 0.0000f;
 
   CacheModule *next_node;  // linked-list impl to link to next level of hierarchy

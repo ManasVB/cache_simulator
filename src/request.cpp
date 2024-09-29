@@ -48,8 +48,6 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
     }
   }
 
-  isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
-
   // std::cout << " Write Miss # " << ptr->Cache_Write_Miss << " Read Miss # " << ptr->Cache_Read_Miss << std::endl;
   
   // Check blocks in the set and if dirty block, evict it
@@ -58,20 +56,18 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   if(ptr->next_node == nullptr && Prefetch_N != 0) {
     uint32_t rowitr = 0, colitr = 0;
     if(streamBuffer_Search(addr >> (ptr->BlockOffset()), rowitr, colitr)) {
-      // MRU prefetch and sync
-      // provide block
       streamBuffer_Sync(rowitr, colitr);
     } else {
+      isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
       // get stream buffer, send addr>>blockoffsetbits
-      streamBuffer_Write(addr >> (ptr->BlockOffset()));
+      streamBuffer_Write(ptr, addr >> (ptr->BlockOffset()));
       requestAddr(ptr->next_node, addr, false);
     }
   } else {
+    isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
+    // If cache miss occurs, read from the next level in the hierarchy
     requestAddr(ptr->next_node, addr, false);
   }
-
-  // If cache miss occurs, read from the next level in the hierarchy
-  // requestAddr(ptr->next_node, addr, false);
 
   MetaData m = {.tag = tag, .valid_bit = true, .dirty_bit = isWrite};
   ptr->metadata[index].push_back(m);

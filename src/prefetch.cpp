@@ -3,12 +3,14 @@
 #include <cstdint>
 #include <cassert>
 
+#include "cache_module.h"
 #include "prefetch.h"
 
 using namespace std;
 
 uint32_t Prefetch_N = 0U, Prefetch_M = 0U;
 vector<vector<uint32_t>> streamBuffer;
+extern uint32_t total_mem_traffic;
 
 bool streamBuffer_Search(uint32_t blockAddr, uint32_t &rowitr, uint32_t &colitr) {
   
@@ -39,11 +41,13 @@ void streamBuffer_Sync(uint32_t rowitr, uint32_t colitr) {
   assert(streamBuffer.size() <= Prefetch_N);
 }
 
-void streamBuffer_Write(uint32_t blockAddr) {
+void streamBuffer_Write(CacheModule *ptr, uint32_t blockAddr) {
 
   std::vector<uint32_t> rowBuffer;
   for(uint32_t j = blockAddr + 1; j <= blockAddr + Prefetch_M; ++j) {
     rowBuffer.push_back(j);
+    ++ptr->prefetches;
+    ++total_mem_traffic;
   }
 
   if(streamBuffer.size() == Prefetch_N) {
