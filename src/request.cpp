@@ -39,7 +39,7 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
           uint32_t rowitr = 0, colitr = 0;        
           if(streamBuffer_Search(addr >> (ptr->BlockOffset()), rowitr, colitr)) {
             // Sync: Change prefetch MRU and stream buffer update
-            streamBuffer_Sync(rowitr, colitr);
+            streamBuffer_Sync(ptr, rowitr, colitr);
           }
         }
 
@@ -56,7 +56,7 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   if(ptr->next_node == nullptr && Prefetch_N != 0) {
     uint32_t rowitr = 0, colitr = 0;
     if(streamBuffer_Search(addr >> (ptr->BlockOffset()), rowitr, colitr)) {
-      streamBuffer_Sync(rowitr, colitr);
+      streamBuffer_Sync(ptr, rowitr, colitr);
     } else {
       isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
       // get stream buffer, send addr>>blockoffsetbits

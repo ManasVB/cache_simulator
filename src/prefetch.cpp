@@ -25,11 +25,13 @@ bool streamBuffer_Search(uint32_t blockAddr, uint32_t &rowitr, uint32_t &colitr)
   return false;
 }
 
-void streamBuffer_Sync(uint32_t rowitr, uint32_t colitr) {
+void streamBuffer_Sync(CacheModule *ptr, uint32_t rowitr, uint32_t colitr) {
 
   uint32_t rowbufferSize = streamBuffer[rowitr].size();
   for(uint32_t k = (streamBuffer[rowitr][rowbufferSize-1]+1); k <= streamBuffer[rowitr][rowbufferSize-1] + (colitr+1); ++k) {
     streamBuffer[rowitr].push_back(k);
+    ++ptr->prefetches;
+    ++total_mem_traffic;
   }
 
   streamBuffer[rowitr].erase(streamBuffer[rowitr].begin(), streamBuffer[rowitr].begin() + (colitr + 1));
