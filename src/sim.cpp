@@ -79,31 +79,32 @@ int main (int argc, char *argv[]) {
    Prefetch_N = params.PREF_N;
    Prefetch_M = params.PREF_M;
 
-   // if(Prefetch_N != 0) {
-   //    streamBuffer.resize(Prefetch_N);
+   // // if(Prefetch_N != 0) {
+   // //    streamBuffer.resize(Prefetch_N);
+   // // }
+   // rowbuf.push_back(2);
+   // rowbuf.push_back(1);
+   // rowbuf.push_back(3);
+
+   // // rowbuf1.push_back(4);
+   // // rowbuf1.push_back(5);
+   // // rowbuf1.push_back(6);
+
+   // // rowbuf2.push_back(12);
+   // // rowbuf2.push_back(13);
+   // // rowbuf2.push_back(14);
+
+   // streamBuffer_Write(1);
+   // streamBuffer_Write(10);
+   // streamBuffer_Write(16);
+   // // streamBuffer.push_back(rowbuf);
+   // // streamBuffer.push_back(rowbuf1);
+   // // streamBuffer.push_back(rowbuf2);
+
+   // uint32_t rowitr = 0, colitr = 0;
+   // if(streamBuffer_Search(11, rowitr, colitr)){
+   //    streamBuffer_Sync(rowitr, colitr);
    // }
-   rowbuf.push_back(2);
-   rowbuf.push_back(1);
-   rowbuf.push_back(3);
-
-   rowbuf1.push_back(4);
-   rowbuf1.push_back(5);
-   rowbuf1.push_back(6);
-
-   rowbuf2.push_back(12);
-   rowbuf2.push_back(13);
-   rowbuf2.push_back(14);
-
-   streamBuffer.push_back(rowbuf);
-   streamBuffer.push_back(rowbuf1);
-   streamBuffer.push_back(rowbuf2);   
-
-   uint32_t rowitr = 0, colitr = 0;
-   streamBuffer_Search(5, rowitr, colitr);
-
-   printf("iterators are %u,%u\n", rowitr, colitr);
-
-   streamBuffer_Sync(rowitr, colitr);
 
    // Read requests from the trace file and execute.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.

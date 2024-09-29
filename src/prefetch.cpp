@@ -11,9 +11,10 @@ uint32_t Prefetch_N = 0U, Prefetch_M = 0U;
 vector<vector<uint32_t>> streamBuffer;
 
 bool streamBuffer_Search(uint32_t blockAddr, uint32_t &rowitr, uint32_t &colitr) {
-  for(uint32_t i = (streamBuffer.size() - 1); i >= 0; --i) {
+  
+  for(int32_t i = (streamBuffer.size() - 1); i >= 0; --i) {
     for(uint32_t j = 0; j < streamBuffer[i].size(); ++j) {
-      if(streamBuffer[i][j] == blockAddr) {
+      if(blockAddr == streamBuffer[i][j]) {
         rowitr = i; colitr = j;
         return true;
       }
@@ -51,8 +52,7 @@ void streamBuffer_Write(uint32_t blockAddr) {
 
   assert(streamBuffer.size() < Prefetch_N);
 
-  // streamBuffer.push_back(rowBuffer);
-
+  streamBuffer.push_back(rowBuffer);
 
 }
 
