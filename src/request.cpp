@@ -3,11 +3,13 @@
 #include "cache_module.h"
 #include "request.h"
 #include "LRU.h"
+#include "prefetch.h"
 
 using namespace std;
 
 extern CacheModule *head_node;
 extern uint32_t total_mem_traffic;
+extern uint32_t Prefetch_N, Prefetch_M;
 
 void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   
@@ -32,20 +34,45 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
       if(md.valid_bit == true && md.tag == tag) {
         LRU_StateUpdate(ptr, md, index, isWrite);
         // std::cout << "HIT " << std::endl;
+        
+        if(ptr->next_node == nullptr && Prefetch_N != 0) {
+          // This is Cache HIT and Prefetch HIT: Sync the prefetch buffer
+          uint32_t rowitr = 0, colitr = 0;        
+          if(streamBuffer_Search(addr >> (ptr->BlockOffset()), rowitr, colitr)) {
+            // Sync: Change prefetch MRU and stream buffer update
+            // Read from Cache, just sync the stream buffer
+            streamBuffer_Sync(ptr, rowitr, colitr);
+          }
+        }
         return;
       }
     }
   }
-
-  isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
 
   // std::cout << " Write Miss # " << ptr->Cache_Write_Miss << " Read Miss # " << ptr->Cache_Read_Miss << std::endl;
   
   // Check blocks in the set and if dirty block, evict it
   Write_Policy(ptr, index);
 
-  // If cache miss occurs, read from the next level in the hierarchy
-  requestAddr(ptr->next_node, addr, false);
+  if(ptr->next_node == nullptr && Prefetch_N != 0) {
+    uint32_t rowitr = 0, colitr = 0;
+    if(streamBuffer_Search(addr >> (ptr->BlockOffset()), rowitr, colitr)) {
+      // This is Cache MISS and Prefetch HIT: Sync the prefetch buffer
+      // Dont read from next memory level, read from prefetch
+      streamBuffer_Sync(ptr, rowitr, colitr);
+    } else {
+      isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
+      // This is Cache MISS and Prefetch MISS
+      // Read from the next memory level, and update prefetch blocks
+      streamBuffer_Write(ptr, addr >> (ptr->BlockOffset()));
+      requestAddr(ptr->next_node, addr, false);
+    }
+  } else {
+    isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
+    // If cache miss occurs and prefetch is not enabled for the current cache level,
+    // read from the next level in the hierarchy
+    requestAddr(ptr->next_node, addr, false);
+  }
 
   MetaData m = {.tag = tag, .valid_bit = true, .dirty_bit = isWrite};
   ptr->metadata[index].push_back(m);

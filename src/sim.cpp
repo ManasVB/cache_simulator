@@ -6,6 +6,7 @@
 #include "sim.h"
 #include "cache_module.h"
 #include "request.h"
+#include "prefetch.h"
 
 #define ReadAddrRequest(x, y) requestAddr(x, y, false)
 #define WriteAddrRequest(x, y) requestAddr(x, y, true)
@@ -13,7 +14,10 @@
 using namespace std;
 
 CacheModule *head_node = nullptr;   // Init the head node of the hierarchy linked list to nullptr
-uint32_t total_mem_traffic = 0;
+uint32_t total_mem_traffic = 0U;
+extern uint32_t Prefetch_N, Prefetch_M;
+extern vector<vector<uint32_t>> streamBuffer;
+vector<uint32_t> rowbuf, rowbuf1, rowbuf2;
 /*  "argc" holds the number of command-line arguments.
     "argv[]" holds the arguments themselves.
 
@@ -71,6 +75,9 @@ int main (int argc, char *argv[]) {
 
    CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC, "L1");
    CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC, "L2");
+   
+   Prefetch_N = params.PREF_N;
+   Prefetch_M = params.PREF_M;
 
    // Read requests from the trace file and execute.
    while (fscanf(fp, "%c %x\n", &rw, &addr) == 2) {	// Stay in the loop if fscanf() successfully parsed two tokens as specified.
@@ -89,6 +96,8 @@ int main (int argc, char *argv[]) {
       ptr->PrintCacheContents();
       ptr = ptr->next_node;
    }
+
+   printStreamBuffer();
    
    cout << "===== Measurements =====" << endl;
    cout << "a. L1 reads: \t" << L1_Cache.Cache_Read_Requests << endl;
@@ -99,7 +108,7 @@ int main (int argc, char *argv[]) {
       L1_Cache.Miss_Rate = ((float)(L1_Cache.Cache_Read_Miss + L1_Cache.Cache_Write_Miss)/(float)(L1_Cache.Cache_Read_Requests + L1_Cache.Cache_Write_Requests));
    cout << std::fixed << std::setprecision(4) << "e. L1 miss rate: \t" << L1_Cache.Miss_Rate << endl;
    cout << "f. L1 writebacks: \t" << L1_Cache.Writeback_Nxt_Lvl << endl;
-   cout << "g. L1 prefetches: \t" << 0 << endl;
+   cout << "g. L1 prefetches: \t" << L1_Cache.prefetches << endl;
 
    cout << "h. L2 reads (demand): \t" << setw(10) << L2_Cache.Cache_Read_Requests << endl;
    cout << "i. L2 read misses (demand): \t" << L2_Cache.Cache_Read_Miss << endl;
@@ -111,7 +120,7 @@ int main (int argc, char *argv[]) {
       L2_Cache.Miss_Rate = (float)L2_Cache.Cache_Read_Miss/(float)L2_Cache.Cache_Read_Requests;
    cout << std::fixed << std::setprecision(4) << "n. L2 miss rate: \t" << L2_Cache.Miss_Rate << endl;
    cout << "o. L2 writebacks: \t" << L2_Cache.Writeback_Nxt_Lvl << endl;
-   cout << "p. L2 prefetches: \t" << 0 << endl;
+   cout << "p. L2 prefetches: \t" << L2_Cache.prefetches << endl;
    cout << "q. memory traffic: \t" << total_mem_traffic << endl;
 
    return(0);
