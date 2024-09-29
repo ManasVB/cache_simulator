@@ -68,5 +68,6 @@ void printStreamBuffer() {
         printf("\n");
       }
     }
+    printf("\n");
   }
 }

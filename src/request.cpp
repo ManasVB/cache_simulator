@@ -3,11 +3,13 @@
 #include "cache_module.h"
 #include "request.h"
 #include "LRU.h"
+#include "prefetch.h"
 
 using namespace std;
 
 extern CacheModule *head_node;
 extern uint32_t total_mem_traffic;
+extern uint32_t Prefetch_N, Prefetch_M;
 
 void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   
@@ -32,6 +34,15 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
       if(md.valid_bit == true && md.tag == tag) {
         LRU_StateUpdate(ptr, md, index, isWrite);
         // std::cout << "HIT " << std::endl;
+        
+        if(ptr->next_node == nullptr && Prefetch_N != 0) {
+          uint32_t rowitr = 0, colitr = 0;        
+          if(streamBuffer_Search(addr >> (ptr->BlockOffset()), rowitr, colitr)) {
+            // Sync: Change prefetch MRU and stream buffer update
+            streamBuffer_Sync(rowitr, colitr);
+          }
+        }
+
         return;
       }
     }
@@ -44,8 +55,23 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   // Check blocks in the set and if dirty block, evict it
   Write_Policy(ptr, index);
 
+  if(ptr->next_node == nullptr && Prefetch_N != 0) {
+    uint32_t rowitr = 0, colitr = 0;
+    if(streamBuffer_Search(addr >> (ptr->BlockOffset()), rowitr, colitr)) {
+      // MRU prefetch and sync
+      // provide block
+      streamBuffer_Sync(rowitr, colitr);
+    } else {
+      // get stream buffer, send addr>>blockoffsetbits
+      streamBuffer_Write(addr >> (ptr->BlockOffset()));
+      requestAddr(ptr->next_node, addr, false);
+    }
+  } else {
+    requestAddr(ptr->next_node, addr, false);
+  }
+
   // If cache miss occurs, read from the next level in the hierarchy
-  requestAddr(ptr->next_node, addr, false);
+  // requestAddr(ptr->next_node, addr, false);
 
   MetaData m = {.tag = tag, .valid_bit = true, .dirty_bit = isWrite};
   ptr->metadata[index].push_back(m);
