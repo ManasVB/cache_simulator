@@ -13,34 +13,33 @@ extern uint32_t Prefetch_N, Prefetch_M;
 
 void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
   
+  // If reached memory, increment total_mem_traffic
   if(ptr == nullptr) {
     ++total_mem_traffic;
-    // cout << "Mem traffic " << total_mem_traffic << endl;
     return;
   }
 
   uint32_t index = 0U;
   uint32_t tag = 0U;
 
+  // Parse the incoming address based on the cache configuration
   tag = ptr->parseAddress(addr, index);
-  // printf("Operation ->%d, Address->%x, tag->%x, Index->%x\n", isWrite, addr,tag,index);
 
+  // Determine if the incoming request is r/w
   isWrite ? ++(ptr->Cache_Write_Requests) : ++(ptr->Cache_Read_Requests);
-  // std::cout << "Write Requests # " << ptr->Cache_Write_Requests << " Read Requests # " << ptr->Cache_Read_Requests;
 
   // the variable md stands for metadata
   if(!((ptr->metadata[index]).empty())) {
     for(auto &md : ptr->metadata[index]) {
       if(md.valid_bit == true && md.tag == tag) {
+
+        // This is a Cache HIT, update the LRU counter of the cache blocks
         LRU_StateUpdate(ptr, md, index, isWrite);
-        // std::cout << "HIT " << std::endl;
         
         if(ptr->next_node == nullptr && Prefetch_N != 0) {
           // This is Cache HIT and Prefetch HIT: Sync the prefetch buffer
           uint32_t rowitr = 0, colitr = 0;        
           if(streamBuffer_Search(addr >> (ptr->BlockOffset()), rowitr, colitr)) {
-            // Sync: Change prefetch MRU and stream buffer update
-            // Read from Cache, just sync the stream buffer
             streamBuffer_Sync(ptr, rowitr, colitr);
           }
         }
@@ -48,10 +47,8 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
       }
     }
   }
-
-  // std::cout << " Write Miss # " << ptr->Cache_Write_Miss << " Read Miss # " << ptr->Cache_Read_Miss << std::endl;
   
-  // Check blocks in the set and if dirty block, evict it
+  // Perform write policy to determine if evictions are needed and how to perform them
   Write_Policy(ptr, index);
 
   if(ptr->next_node == nullptr && Prefetch_N != 0) {
@@ -63,7 +60,7 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
     } else {
       isWrite ? ++(ptr->Cache_Write_Miss) : ++(ptr->Cache_Read_Miss);
       // This is Cache MISS and Prefetch MISS
-      // Read from the next memory level, and update prefetch blocks
+      // Read from the next memory level, and update prefetch buffer blocks
       streamBuffer_Write(ptr, addr >> (ptr->BlockOffset()));
       requestAddr(ptr->next_node, addr, false);
     }
@@ -74,6 +71,7 @@ void requestAddr(CacheModule *ptr, uint32_t addr, bool isWrite) {
     requestAddr(ptr->next_node, addr, false);
   }
 
+  // Add the incoming new block to the cache
   MetaData m = {.tag = tag, .valid_bit = true, .dirty_bit = isWrite};
   ptr->metadata[index].push_back(m);
 

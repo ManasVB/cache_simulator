@@ -14,7 +14,7 @@ extern uint32_t total_mem_traffic;
 
 bool streamBuffer_Search(uint32_t blockAddr, uint32_t &rowitr, uint32_t &colitr) {
   
-  for(int32_t i = (streamBuffer.size() - 1); i >= 0; --i) {
+  for(int64_t i = (streamBuffer.size() - 1); i >= 0; --i) {
     for(uint32_t j = 0; j < streamBuffer[i].size(); ++j) {
       if(blockAddr == streamBuffer[i][j]) {
         rowitr = i; colitr = j;
@@ -63,8 +63,6 @@ void streamBuffer_Write(CacheModule *ptr, uint32_t blockAddr) {
 }
 
 void printStreamBuffer() {
-
-  if(Prefetch_N != 0) {
     cout << "===== Stream Buffer(s) contents =====" << endl;
     for(auto i = streamBuffer.rbegin(); i != streamBuffer.rend(); ++i) {
       if(!((*i).empty())) {
@@ -75,5 +73,4 @@ void printStreamBuffer() {
       }
     }
     printf("\n");
-  }
 }

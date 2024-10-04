@@ -73,6 +73,8 @@ int main (int argc, char *argv[]) {
    printf("trace_file: %s\n", trace_file);
    printf("\n");
 
+   // Instantiate the cache modules here. They will get linked in a hierarchy as per
+   // the order of instantiation. 
    CacheModule L1_Cache(params.BLOCKSIZE, params.L1_SIZE, params.L1_ASSOC, "L1");
    CacheModule L2_Cache(params.BLOCKSIZE, params.L2_SIZE, params.L2_ASSOC, "L2");
    
@@ -97,7 +99,9 @@ int main (int argc, char *argv[]) {
       ptr = ptr->next_node;
    }
 
-   printStreamBuffer();
+   // If Prefetch_N==0, means prefetch is not enabled.
+   if(Prefetch_N != 0)
+      printStreamBuffer();
    
    cout << "===== Measurements =====" << endl;
    cout << "a. L1 reads: \t" << L1_Cache.Cache_Read_Requests << endl;

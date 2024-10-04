@@ -6,6 +6,11 @@
 
 #include "sim.h"
 
+/**
+ * Actual Definition of a generic cache module.
+ * Every time an object is instansiated, a hierarchy of cache levels is created.
+ * Each level is linked to one other by the pointer "next_node"
+ */
 class CacheModule {
 
   private:
