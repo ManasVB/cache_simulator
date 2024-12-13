@@ -1,9 +1,12 @@
-# cache_simulator
-ECE 563 Project 1: Cache and Memory Hierarchy Design Simulator
+# Multi-level Cache and Memory Hierarchy Design Simulator
 
-1. Type "make" to build.  (Type "make clean" first if you already compiled and want to recompile from scratch.)
+- Simulated a multi-level cache module with various cache sizes and associativity, implementing LRU replacement and WBWA write policy. Modeled the cache for different memory hierarchy levels, from CPU to main memory, and integrated efficient Stream Buffer Prefetching.
+- Compared the performance, area, and energy of different memory hierarchy configurations using the simulator, with a subset of the SPEC 2006 benchmark suite and SPEC 2017 benchmark suite.
 
-2. Run trace reader:
+1. Build:
+	- make all
+
+2. Run:
 
    To run without throttling output:
    ./sim 32 8192 4 262144 8 3 10 ../example_trace.txt
@@ -11,11 +14,7 @@ ECE 563 Project 1: Cache and Memory Hierarchy Design Simulator
    To run with throttling (via "less"):
    ./sim 32 8192 4 262144 8 3 10 ../example_trace.txt | less
 
-   To run and confirm that all requests in the trace were read correctly:
-   ./sim 32 8192 4 262144 8 3 10 ../example_trace.txt > echo_trace.txt
-   diff ../example_trace.txt echo_trace.txt
-	The result of "diff" should indicate that the only difference is that echo_trace.txt has the configuration information.
-	0a1,10
+```
 	> ===== Simulator configuration =====
 	> BLOCKSIZE:  32
 	> L1_SIZE:    8192
@@ -26,3 +25,4 @@ ECE 563 Project 1: Cache and Memory Hierarchy Design Simulator
 	> PREF_M:     10
 	> trace_file: ../example_trace.txt
 	>
+```
